@@ -19,7 +19,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.nafeij.myapp",
+      "permissions": [
+        "android.permission.MANAGE_MEDIA"
+      ]
     },
     "web": {
       "bundler": "metro",
