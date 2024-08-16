@@ -1,11 +1,11 @@
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { useManagerPermissions } from "@/hooks/useManagerPermissions";
+import { launchImageLibraryAsync, MediaTypeOptions } from "expo-image-picker";
 import { addAssetsToAlbumAsync, Album, createAssetAsync, getAlbumsAsync, usePermissions } from 'expo-media-library';
+import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable } from "react-native";
-import { launchImageLibraryAsync, MediaTypeOptions } from "expo-image-picker";
-import { ScrollView } from "react-native-gesture-handler";
-import { useManagerPermissions } from "@/hooks/useManagerPermissions";
+import { RefreshControl, ScrollView } from "react-native-gesture-handler";
 
 export default function App() {
     const [albums, setAlbums] = useState<Album[]>([]);
@@ -19,9 +19,7 @@ export default function App() {
         if (managerPermission?.status !== 'granted') {
             await requestManagerPermission();
         }
-        const fetchedAlbums = await getAlbumsAsync({
-            includeSmartAlbums: true,
-        });
+        const fetchedAlbums = await getAlbumsAsync({ includeSmartAlbums: true });
         setAlbums(fetchedAlbums);
     }
 
@@ -45,7 +43,15 @@ export default function App() {
     }
 
     return (
-        <ScrollView style={{ flex: 1 }}>
+        <ScrollView style={{ flex: 1 }}
+            refreshControl={
+                <RefreshControl
+                    refreshing={albums.length === 0}
+                    onRefresh={getAlbums}
+                />
+            }
+        >
+            <Stack.Screen options={{ title: "Pick destination album" }} />
             {
                 albums.map((album) => (
                     <Pressable key={album.id} onPress={() => addPic(album)}>
